@@ -55,7 +55,8 @@ var _ = Describe("Alerts", Label(smoke), Serial, func() {
 			Client: &http.Client{
 				Transport: config.NewAuthorizationCredentialsRoundTripper(
 					"Bearer",
-					config.Secret(token.Status.Token),
+					//config.Secret(token.Status.Token),
+					config.NewInlineSecret(token.Status.Token),
 					roundTripper,
 				),
 			},
