@@ -11,8 +11,13 @@ spec:
   - name: sre-mhc-remediation-alert
     rules:
     - alert: SREMachineHealthCheckRemediationRateHigh
-      expr: increase(mapi_machinehealthcheck_remediation_success_total [60m]) > 1
-      Annotations:
-        Message: worker nodes have been remediated 2 or more times in the last hour this may indicate an unstable workload running on the cluster
+      expr: |
+        (increase(mapi_machinehealthcheck_remediation_success_total[60m]) > 2)
+        and on(name, namespace)
+        (mapi_machinehealthcheck_short_circuit == 0)
+      for: 60m
+      annotations:
+        summary: "MachineHealthCheck {{ $labels.name }} has high remediation rate"
+        description: "worker nodes have been remediated 2 or more times in the last hour this may indicate an unstable workload running on the cluster"
       labels:
         severity: warning
